@@ -9,44 +9,26 @@ PROJECT_DIR = SCRIPT_DIR.parent.parent
 DATA_DIR = PROJECT_DIR / "data"
 PDF_FILE = DATA_DIR / "pdf" / "mgn_paper.pdf"
 
-# file_path = "./data/pdf/mgn_paper.pdf"
 loader = PyPDFLoader(PDF_FILE)
 
 docs = loader.load()
-
-# print(len(docs))
-
+print("docs: ", len(docs))
 # print(f"{docs[0].page_content}\n")
 # print(docs[0].metadata)
 
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+# from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000, chunk_overlap=200, add_start_index=True
-)
-all_splits = text_splitter.split_documents(docs)
-
-print(len(all_splits))
-
-# from langchain_ollama import ChatOllama
-
-# llm = ChatOllama(
-#     model="deepseek-r1:8b",
-#     reasoning=False,
-#     temperature=0.0
+# text_splitter = RecursiveCharacterTextSplitter(
+#     chunk_size=1000, chunk_overlap=200, add_start_index=True
 # )
+# all_splits = text_splitter.split_documents(docs)
+# print("all_splits: ", len(all_splits))
 
 from langchain_ollama import OllamaEmbeddings
 
 embeddings = OllamaEmbeddings(model="deepseek-r1:8b")
 
-vectors = [embeddings.embed_query(split.page_content) for split in all_splits]
-# vector_1 = embeddings.embed_query(all_splits[0].page_content)
-# vector_2 = embeddings.embed_query(all_splits[1].page_content)
-
-# assert len(vector_1) == len(vector_2)
-# print(f"Generated vectors of length {len(vector_1)}\n")
-# print(vector_1[:10])
+vectors = [embeddings.embed_query(split.page_content) for split in docs]
 
 import umap
 reducer = umap.UMAP()
